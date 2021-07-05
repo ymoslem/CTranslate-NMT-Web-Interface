@@ -57,7 +57,7 @@ def translate(source, ct_model, sp_source_model, sp_target_model, device="cpu"):
     return translation
 
 
-# File pathes to the CTranslate2 model
+# File paths to the CTranslate2 model
 # and the SentencePiece source and target models.
 ct_model = "/path/to/the/ctranslate/model/directory"
 sp_source_model = "/path/to/the/sentencepiece/source/model/file"
