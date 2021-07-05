@@ -1,3 +1,6 @@
+# Simple streamlit test
+# To launch your app, run: streamlit run test.py
+
 import streamlit as st
 
 st.title("Upper My Text")
