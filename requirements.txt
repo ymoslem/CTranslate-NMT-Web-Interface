@@ -1,0 +1,4 @@
+ctranslate2>=2.1.0
+sentencepiece>=0.1.96
+streamlit>=0.84.0
+watchdog>=2.1.3
