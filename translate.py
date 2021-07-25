@@ -1,6 +1,7 @@
 import streamlit as st
 import sentencepiece as spm
 import ctranslate2
+from nltk import sent_tokenize
 
 
 def tokenize(text, sp_source_model):
@@ -20,10 +21,10 @@ def tokenize(text, sp_source_model):
 
 
 def detokenize(text, sp_target_model):
-    """Use SentencePiece model to detokenize a sentence's list of tokens
+    """Use SentencePiece model to detokenize a sentence
 
     Args:
-        text (list(str)): A sentence's list of tokens to detokenize
+        text (list(str)): A sentence to tokenize
         sp_target_model (str): The path to the SentencePiece target model
 
     Returns:
@@ -44,20 +45,22 @@ def translate(source, ct_model, sp_source_model, sp_target_model, device="cpu"):
         sp_source_model (str): The path to the SentencePiece source model
         sp_target_model (str): The path to the SentencePiece target model
         device (str): "cpu" (default) or "cuda"
-
     Returns:
         Translation of the source text.
     """
 
     translator = ctranslate2.Translator(ct_model, device)
-    source_tokenized = tokenize(source, sp_source_model)
-    translation = translator.translate_batch([source_tokenized])
-    translation = detokenize(translation[0][0]["tokens"], sp_target_model)
+    source_sentences = sent_tokenize(source)
+    source_tokenized = tokenize(source_sentences, sp_source_model)
+    translations = translator.translate_batch(source_tokenized)
+    translations = [translation[0]["tokens"] for translation in translations]
+    translations_detokenized = detokenize(translations, sp_target_model)
+    translation = " ".join(translations_detokenized)
 
     return translation
 
 
-# File paths to the CTranslate2 model
+# [Modify] File paths here to the CTranslate2 model
 # and the SentencePiece source and target models.
 ct_model = "/path/to/the/ctranslate/model/directory"
 sp_source_model = "/path/to/the/sentencepiece/source/model/file"
