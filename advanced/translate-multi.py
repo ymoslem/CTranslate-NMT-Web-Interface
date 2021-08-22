@@ -61,16 +61,15 @@ def translate(source, ct_model, sp_source_model, sp_target_model, device="cpu"):
 
 # [Modify] File paths here to the CTranslate2 model
 # and the SentencePiece source and target models.
-# try caching @st.cache
 def load_models(lang_pair):
     if lang_pair == "English-to-French":
-        path = "/Users/yasmin/Documents/Snowball/fr_en/"
-        ct_model = path+"model"
-        sp_source_model = sp_target_model = path+"sentencepiece.model"
+        ct_model = "/path/to/your/ctranslate2/model"
+        sp_source_model = "/path/to/your/sentencepiece/source/model"
+        sp_target_model = "/path/to/your/sentencepiece/target/model"
     elif lang_pair == "French-to-English":
-        path = "/Users/yasmin/Documents/Snowball/fr_en/"
-        ct_model = path+"model"
-        sp_source_model = sp_target_model = path+"sentencepiece.model"
+        ct_model =  "/path/to/your/ctranslate2/model"
+        sp_source_model = "/path/to/your/sentencepiece/source/model"
+        sp_target_model = "/path/to/your/sentencepiece/target/model"
 
     return ct_model, sp_source_model, sp_target_model
 
