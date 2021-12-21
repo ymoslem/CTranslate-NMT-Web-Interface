@@ -15,8 +15,7 @@ def tokenize(text, sp_source_model):
         List of tokens of the text, or list of lists (sentences) of tokens
     """
 
-    sp = spm.SentencePieceProcessor(sp_source_model)
-    tokens = sp.encode(text, out_type=str)
+    tokens = sp_source_model.encode(text, out_type=str)
     return tokens
 
 
@@ -31,12 +30,11 @@ def detokenize(text, sp_target_model):
         String of the detokenized text, or list of detokenized sentences
     """
 
-    sp = spm.SentencePieceProcessor(sp_target_model)
-    translation = sp.decode(text)
+    translation = sp_target_model.decode(text)
     return translation
 
 
-def translate(source, ct_model, sp_source_model, sp_target_model, device="cpu"):
+def translate(source, translator, sp_source_model, sp_target_model):
     """Use CTranslate model to translate a sentence
 
     Args:
@@ -49,7 +47,6 @@ def translate(source, ct_model, sp_source_model, sp_target_model, device="cpu"):
         Translation of the source text.
     """
 
-    translator = ctranslate2.Translator(ct_model, device)
     source_sentences = sent_tokenize(source)  # split sentences
     source_tokenized = tokenize(source_sentences, sp_source_model)
     translations = translator.translate_batch(source_tokenized, replace_unknowns=True)
@@ -61,17 +58,21 @@ def translate(source, ct_model, sp_source_model, sp_target_model, device="cpu"):
 
 # [Modify] File paths here to the CTranslate2 model
 # and the SentencePiece source and target models.
-def load_models(lang_pair):
+def load_models(lang_pair, device="cpu"):
     if lang_pair == "English-to-French":
-        ct_model = "/path/to/your/ctranslate2/model"
-        sp_source_model = "/path/to/your/sentencepiece/source/model"
-        sp_target_model = "/path/to/your/sentencepiece/target/model"
+        ct_model_path = "/path/to/your/ctranslate2/model/"
+        sp_source_model_path = "/path/to/your/sp_source.model"
+        sp_target_model_path = "/path/to/your/sp_target.model"
     elif lang_pair == "French-to-English":
-        ct_model =  "/path/to/your/ctranslate2/model"
-        sp_source_model = "/path/to/your/sentencepiece/source/model"
-        sp_target_model = "/path/to/your/sentencepiece/target/model"
+        ct_model_path =  "/path/to/your/ctranslate2/model/"
+        sp_source_model_path = "/path/to/your/sp_source.model"
+        sp_target_model_path = "/path/to/your/sp_target.model"
 
-    return ct_model, sp_source_model, sp_target_model
+    sp_source_model = spm.SentencePieceProcessor(sp_source_model_path)
+    sp_target_model = spm.SentencePieceProcessor(sp_target_model_path)
+    translator = ctranslate2.Translator(ct_model_path, device)
+
+    return translator, sp_source_model, sp_target_model
 
 
 # Title for the page and nice icon
@@ -92,10 +93,10 @@ with st.form("my_form"):
     sources = user_input.split("\n")  # split on new line.
 
     # Load models
-    ct_model, sp_source_model, sp_target_model = load_models(lang_pair)
+    translator, sp_source_model, sp_target_model = load_models(lang_pair, device="cpu")
 
     # Translate with CTranslate2 model
-    translations = [translate(source, ct_model, sp_source_model, sp_target_model) for source in sources]
+    translations = [translate(source, translator, sp_source_model, sp_target_model) for source in sources]
     translations = [" ". join(translation) for translation in translations] 
 
     # Create a button
