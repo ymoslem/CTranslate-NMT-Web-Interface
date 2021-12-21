@@ -9,7 +9,7 @@ def tokenize(text, sp_source_model):
 
     Args:
         text (str or list(str)): A sentence or list of sentences to tokenize
-        sp_source_model: Object of SentencePieceProcessor, with the source model
+        sp_source_model (object): Object of SentencePieceProcessor, with the source model
 
     Returns:
         List of tokens of the text, or list of lists (sentences) of tokens
@@ -24,7 +24,7 @@ def detokenize(text, sp_target_model):
 
     Args:
         text (str or list(str)): A sentence to or list of sentences to detokenize
-        sp_target_model: Object of SentencePieceProcessor, with the target model
+        sp_target_model (object): Object of SentencePieceProcessor, with the target model
 
     Returns:
         String of the detokenized text, or list of detokenized sentences
@@ -39,7 +39,7 @@ def translate(source, translator, sp_source_model, sp_target_model):
 
     Args:
         source (str): A source sentence to translate
-        translator: Object of Translator, with the CTranslate2 model
+        translator (object): Object of Translator, with the CTranslate2 model
         sp_source_model (str): The path to the SentencePiece source model
         sp_target_model (str): The path to the SentencePiece target model
         device (str): "cpu" (default) or "cuda"
@@ -56,8 +56,8 @@ def translate(source, translator, sp_source_model, sp_target_model):
     return translations_detokenized
 
 
-# [Modify] File paths here to the CTranslate2 model
-# and the SentencePiece source and target models.
+# [Modify] File paths here to the CTranslate2 and SentencePiece models.
+@st.cache(allow_output_mutation=True)
 def load_models(lang_pair, device="cpu"):
     if lang_pair == "English-to-French":
         ct_model_path = "/path/to/your/ctranslate2/model/"
