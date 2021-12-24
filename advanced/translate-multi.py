@@ -8,10 +8,10 @@ def translate(source, translator, sp_source_model, sp_target_model):
     """Use CTranslate model to translate a sentence
 
     Args:
-        source (str): A source sentence to translate
+        source (str): Source sentences to translate
         translator (object): Object of Translator, with the CTranslate2 model
-        sp_source_model (object): The path to the SentencePiece source model
-        sp_target_model (object): The path to the SentencePiece target model
+        sp_source_model (object): Object of SentencePieceProcessor, with the SentencePiece source model
+        sp_target_model (object): Object of SentencePieceProcessor, with the SentencePiece target model
     Returns:
         Translation of the source text
     """
@@ -34,7 +34,7 @@ def load_models(lang_pair, device="cpu"):
         lang_pair (str): Language pair to load the models for
         device (str): "cpu" (default) or "cuda"
     Returns:
-        Model objects of Translator and SentencePieceProcessor
+        CTranslate2 Translator and SentencePieceProcessor objects to load the models
     """
     if lang_pair == "English-to-French":
         ct_model_path = "/path/to/your/ctranslate2/model/"
