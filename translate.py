@@ -4,17 +4,16 @@ import ctranslate2
 from nltk import sent_tokenize
 
 
-def translate(source, ct_model, sp_source_model, sp_target_model, device="cpu"):
+def translate(source, translator, sp_source_model, sp_target_model):
     """Use CTranslate model to translate a sentence
 
     Args:
-        source (str): A source sentence to translate
-        ct_model (str): The path to the CTranslate model
-        sp_source_model (str): The path to the SentencePiece source model
-        sp_target_model (str): The path to the SentencePiece target model
-        device (str): "cpu" (default) or "cuda"
+        source (str): Source sentences to translate
+        translator (object): Object of Translator, with the CTranslate2 model
+        sp_source_model (object): Object of SentencePieceProcessor, with the SentencePiece source model
+        sp_target_model (object): Object of SentencePieceProcessor, with the SentencePiece target model
     Returns:
-        Translation of the source text.
+        Translation of the source text
     """
 
     source_sentences = sent_tokenize(source)
