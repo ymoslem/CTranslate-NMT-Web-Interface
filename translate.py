@@ -4,38 +4,6 @@ import ctranslate2
 from nltk import sent_tokenize
 
 
-def tokenize(text, sp_source_model):
-    """Use SentencePiece model to tokenize a sentence
-
-    Args:
-        text (str): A sentence to tokenize
-        sp_source_model (str): The path to the SentencePiece source model
-
-    Returns:
-        List of of tokens of the text.
-    """
-
-    sp = spm.SentencePieceProcessor(sp_source_model)
-    tokens = sp.encode(text, out_type=str)
-    return tokens
-
-
-def detokenize(text, sp_target_model):
-    """Use SentencePiece model to detokenize a sentence
-
-    Args:
-        text (list(str)): A sentence to tokenize
-        sp_target_model (str): The path to the SentencePiece target model
-
-    Returns:
-        String of the detokenized text.
-    """
-
-    sp = spm.SentencePieceProcessor(sp_target_model)
-    translation = sp.decode(text)
-    return translation
-
-
 def translate(source, ct_model, sp_source_model, sp_target_model, device="cpu"):
     """Use CTranslate model to translate a sentence
 
@@ -49,22 +17,26 @@ def translate(source, ct_model, sp_source_model, sp_target_model, device="cpu"):
         Translation of the source text.
     """
 
-    translator = ctranslate2.Translator(ct_model, device)
     source_sentences = sent_tokenize(source)
-    source_tokenized = tokenize(source_sentences, sp_source_model)
+    source_tokenized = sp_source_model.encode(source_sentences, out_type=str)
     translations = translator.translate_batch(source_tokenized)
     translations = [translation[0]["tokens"] for translation in translations]
-    translations_detokenized = detokenize(translations, sp_target_model)
+    translations_detokenized = sp_target_model.decode(translations)
     translation = " ".join(translations_detokenized)
 
     return translation
 
 
-# [Modify] File paths here to the CTranslate2 model
-# and the SentencePiece source and target models.
-ct_model = "/path/to/the/ctranslate/model/directory"
-sp_source_model = "/path/to/the/sentencepiece/source/model/file"
-sp_target_model = "/path/to/the/sentencepiece/target/model/file"
+# [Modify] File paths here to the CTranslate2 SentencePiece models.
+ct_model_path = "/path/to/the/ctranslate/model/directory"
+sp_source_model_path = "/path/to/the/sentencepiece/source/model/file"
+sp_target_model_path = "/path/to/the/sentencepiece/target/model/file"
+
+# Create objects of CTranslate2 Translator and SentencePieceProcessor to load the models
+translator = ctranslate2.Translator(ct_model_path, "cpu")    # or "cuda" for GPU
+sp_source_model = spm.SentencePieceProcessor(sp_source_model_path)
+sp_target_model = spm.SentencePieceProcessor(sp_target_model_path)
+
 
 # Title for the page and nice icon
 st.set_page_config(page_title="NMT", page_icon="🤖")
@@ -76,7 +48,7 @@ with st.form("my_form"):
     # Textarea to type the source text.
     user_input = st.text_area("Source Text", max_chars=200)
     # Translate with CTranslate2 model
-    translation = translate(user_input, ct_model, sp_source_model, sp_target_model)
+    translation = translate(user_input, translator, sp_source_model, sp_target_model)
 
     # Create a button
     submitted = st.form_submit_button("Translate")
